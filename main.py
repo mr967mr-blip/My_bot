@@ -1,15 +1,19 @@
 import os
 import json
+import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 
-# --- الإعدادات المحمية ---
+# تفعيل تسجيل الأخطاء لمعرفة السبب في الـ Terminal إذا توقف الكود
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+# --- الإعدادات المحمية بالكامل ---
 TOKEN = '8230814965:AAGdR9KvXi3QtMY4G_bALzVbvcBQqwZcvgk' 
 MY_ID = 5848768601 
 DATA_FILE = 'clients_data.json'
 BOT_BRAND_NAME = "بوت المندوب" 
 
-# الهيكل الأساسي للمواد الدراسية (عربي + إنجليزي)
+# الهيكل الأساسي للمواد الدراسية
 DEFAULT_DATA = {
     "c_sharp": {"name": "💻 C# - سي شارب", "lectures": [], "courses": "🔗 كورس السي شارب الشامل لاحقاً", "docs": [], "assignments": []},
     "os": {"name": "⚙️ Operating System - نظم التشغيل", "lectures": [], "courses": "🔗 شرح مادة نظم التشغيل لاحقاً", "docs": [], "assignments": []},
@@ -21,7 +25,6 @@ DEFAULT_DATA = {
     "hardware": {"name": "🔧 PC Hardware and Maintenance - صيانة عتاد الحاسوب", "lectures": [], "courses": "🔗 كورس صيانة الكمبيوتر", "docs": [], "assignments": []}
 }
 
-# دالة قراءة وتجهيز قاعدة البيانات من ملف الـ JSON
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
@@ -37,12 +40,10 @@ def load_data():
             return DEFAULT_DATA
     return DEFAULT_DATA
 
-# دالة الحفظ التلقائي الفوري لتفادي ضياع البيانات
 def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-# تشغيل قاعدة البيانات وتحميل محتوياتها
 DATA = load_data()
 
 # استقبال الطلاب عند كتابة أمر البدء /start
@@ -181,4 +182,5 @@ async def admin_receive_content(update: Update, context: ContextTypes.DEFAULT_TY
         context.user_data["upload_type"] = "photo"
         context.user_data["upload_content"] = update.message.photo[-1].file_id
         context.user_data["upload_caption"] = update.message.caption if update.message.caption else ""
+
 

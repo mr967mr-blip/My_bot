@@ -67,11 +67,17 @@ def load_data():
             return json.load(f)
     return {}
 
-# أمر بدء عرض المواد للطلاب
-async def start_materials(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+# أمر بدء البوت الرئيسي المحدث ليعمل مع /start مباشرة
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     keyboard = [[InlineKeyboardButton(item["name"], callback_data=f"mat_{key}")] for key, item in DATA.items()]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(f"✨ مرحباً بك في بوت {BOT_BRAND_NAME}.\nالرجاء اختيار المادة التي تود تصفح محتواها:", reply_markup=reply_markup)
+    
+    first_name = update.message.from_user.first_name
+    await update.message.reply_text(
+        f"✨ مرحباً بك يا {first_name} في بوت {BOT_BRAND_NAME} التعليمي.\n\n"
+        f"الرجاء اختيار المادة الدراسية التي تود تصفح ملفاتها ومحاضراتها السابقة 👇:", 
+        reply_markup=reply_markup
+    )
 
 # معالج الضغط على الأزرار وقراءة البيانات
 async def button_click(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -140,18 +146,19 @@ async def catch_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def main():
     app = ApplicationBuilder().token(TOKEN).build()
 
-    # الربط والتحكم بالأوامر
-    app.add_handler(CommandHandler("materials", start_materials))
+    # الربط والتحكم بالأوامر - تم تعديلها هنا إلى start
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_click))
     
     # معالج مخصص لك كمطور لمعرفة الـ file_id عند إرسال أي ملف PDF للبوت
     app.add_handler(MessageHandler(filters.Document.ALL, catch_file_id))
 
-    print(f"[{BOT_BRAND_NAME}] Bot is running...")
+    print(f"[{BOT_BRAND_NAME}] Bot is running on /start...")
     app.run_polling()
 
 if __name__ == '__main__':
     main()
+
 
 
 

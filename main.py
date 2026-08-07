@@ -4,10 +4,10 @@ import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, CallbackQueryHandler, MessageHandler, filters
 
-# تفعيل تسجيل الأخطاء لمعرفة السبب في الـ Terminal إذا توقف الكود
+# تفعيل تسجيل الأخطاء
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-# --- الإعدادات المحمية بالكامل ---
+# --- الإعدادات المحمية ---
 TOKEN = '8230814965:AAGdR9KvXi3QtMY4G_bALzVbvcBQqwZcvgk' 
 MY_ID = 5848768601 
 DATA_FILE = 'clients_data.json'
@@ -142,7 +142,7 @@ async def button_click(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         else:
             await query.answer("❌ عذراً، لا تمتلك صلاحية مسح الملفات.", show_alert=True)
 
-# دالة عرض المحتوى للطلاب مع زر الحذف الذكي للمندوب
+# دالة عرض المحتوى للطلاب مع زر الحذف الذكي للمندوب (تم تعديل السطر 144 هنا ليصبح صحيحاً)
 async def send_section_content(query, context, subject_key, category, category_title, user_id):
     items = DATA[subject_key][category]
     if not items:
@@ -182,5 +182,6 @@ async def admin_receive_content(update: Update, context: ContextTypes.DEFAULT_TY
         context.user_data["upload_type"] = "photo"
         context.user_data["upload_content"] = update.message.photo[-1].file_id
         context.user_data["upload_caption"] = update.message.caption if update.message.caption else ""
+
 
 
